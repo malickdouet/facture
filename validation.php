@@ -30,10 +30,6 @@ if (!empty($_POST)) {
     $data['price'] = $_POST['price'];
     $data['quantity'] = $_POST['quantity'];
     $_SESSION['bills'][] = $data;
-
-
-    // echo '<pre>', print_r($_SESSION['bills'], true), '</pre>';
-    //die();
 }
 
 
