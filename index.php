@@ -1,6 +1,29 @@
 <?php
 session_start();
 
+if (empty($_SESSION['bills'])) {
+    $_SESSION['bills'] = [
+        '0' => [
+            'reference' =>  'ref001',
+            'designation' => 'Produit 1',
+            'price' => '15',
+            'quantity' => '2'
+        ],
+        '1' => [
+            'reference' =>  'ref002',
+            'designation' => 'Produit 2',
+            'price' => '30',
+            'quantity' => '4'
+        ],
+        '2' => [
+            'reference' =>  'ref003',
+            'designation' => 'Produit 3',
+            'price' => '40',
+            'quantity' => '5'
+        ]
+    ];
+}
+
 $bills = $_SESSION['bills'];
 $total_global = 0;
 
@@ -17,6 +40,12 @@ $total_global = 0;
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="main.js"></script>
     <style>
+
+        .error {
+            color: red;
+            font-size: 20px;
+            font-weight: bold;
+        }
         table {
         border-collapse: collapse;
         width: 100%;
@@ -75,8 +104,8 @@ $total_global = 0;
         <h1><strong>Hyper </strong></h1>
         <p>50 avenue jean jaures 94230 Cachan</p>
         <p>0761154105</p>
-        <p>Date: 12/04/2019 </p>
-        <P>NUMERO DE FACTURE: vl22121212Z3</p>
+        <p>Date: <?= date('d/m/Y') ?> </p>
+        <P>NUMERO DE FACTURE: v<?= mt_rand(10000000, 300000000000000)?></p>
         <h4> CLIENT : GUINEE GAMES <h4>
         <table style="width:100%">
             <tr>
@@ -116,20 +145,24 @@ $total_global = 0;
 
 
     <h2><strong>Saisie d'un nouveau produit</strong></h2>
+
+    <?php if(!empty($_SESSION['errors'])): ?>
+    <span class="error"><?= implode('<br>', $_SESSION['errors']); ?></span>
+    <?php endif; ?>
     <form method="POST" action="./validation.php">
         <label>
             <span>Libelle</span>
-            <input type="text" name="designation">
+            <input type="text" name="designation" value="<?php echo (!empty($_SESSION['data']['designation'])) ? $_SESSION['data']['designation'] : ''; ?>">
         </label>
 
         <label>
             <span>Quantité</span>
-            <input type="text" name="quantity">
+            <input type="text" name="quantity" value="<?php echo (!empty($_SESSION['data']['quantity'])) ? $_SESSION['data']['quantity'] : ''; ?>">
         </label>
 
         <label>
             <span>Price</span>
-            <input type="text" name="price">
+            <input type="text" name="price" value="<?php echo (!empty($_SESSION['data']['price'])) ? $_SESSION['data']['price'] : ''; ?>">
         </label>
 
         <input type="submit" name="Valider">
