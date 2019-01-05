@@ -1,27 +1,7 @@
 <?php
+session_start();
 
-
-$tableaux = [
-    '0' => [
-        'reference' =>  'ref001',
-        'libelle' => 'Produit 1',
-        'prix' => '15',
-        'quantite' => '2'
-    ],
-    '1' => [
-        'reference' =>  'ref002',
-        'libelle' => 'Produit 2',
-        'prix' => '30',
-        'quantite' => '4'
-    ],
-    '2' => [
-        'reference' =>  'ref003',
-        'libelle' => 'Produit 3',
-        'prix' => '40',
-        'quantite' => '5'
-    ]
-];
-
+$bills = $_SESSION['bills'];
 $total_global = 0;
 
 ?>
@@ -91,42 +71,68 @@ $total_global = 0;
     </style>
 </head>
 <body>
-<h1><strong>Hyper </strong></h1>
-<p>50 avenue jean jaures 94230 Cachan</p>
-<p>0761154105</p>
-<p>Date: 12/04/2019 </p>
-<P>NUMERO DE FACTURE: vl22121212Z3</p>
-<h4> CLIENT : GUINEE GAMES <h4>
+    <?php if (!empty($bills)): ?>
+        <h1><strong>Hyper </strong></h1>
+        <p>50 avenue jean jaures 94230 Cachan</p>
+        <p>0761154105</p>
+        <p>Date: 12/04/2019 </p>
+        <P>NUMERO DE FACTURE: vl22121212Z3</p>
+        <h4> CLIENT : GUINEE GAMES <h4>
+        <table style="width:100%">
+            <tr>
+                <th>PRODUIT</th>
+                <th>DESCRIPTION</th> 
+                <th>QUANTITÉ</th>
+                <th>PRIX UNITAIRE</th>
+                <th>TOTAL</th>
+            </tr>
 
-    <table style="width:100%">
-        <tr>
-            <th>PRODUIT</th>
-            <th>DESCRIPTION</th> 
-            <th>QUANTITÉ</th>
-            <th>PRIX UNITAIRE</th>
-            <th>TOTAL</th>
-        </tr>
+            <?php foreach($bills as $produit => $details): ?>
 
-        <?php foreach($tableaux as $produit => $details): ?>
+            <?php
+                $total = $details['quantity'] * $details['price'];
+                $total_global = $total_global + $total;
 
-        <?php
-            $total = $details['quantite'] * $details['prix'];
-            $total_global = $total_global + $total;
+                // 0 + 30
+                // 30 + 120
+                // 150
+            ?>
+            <tr>
+                <td><?php echo $details['reference']; ?></td>
+                <td><?php echo $details['designation']; ?></td>
+                <td><?php echo $details['quantity']; ?></td>
+                <td><?php echo $details['price'] . '€'; ?></td>
+                <td><?php echo $total . '€' ?></td>
+            </tr>
+            <?php endforeach; ?>
 
-            // 0 + 30
-            // 30 + 120
-            // 150
-        ?>
-        <tr>
-            <td><?php echo $details['reference']; ?></td>
-            <td><?php echo $details['libelle']; ?></td> 
-            <td><?php echo $details['prix'] . '€'; ?></td>
-            <td><?php echo $details['quantite']; ?></td>
-            <td><?php echo $total . '€' ?></td>
-        </tr>
-        <?php endforeach; ?>
+        </table>
+        <h3> TOTAL A PAYER: <?= $total_global; ?>€</h3>
 
-    </table>
-    <h3> TOTAL A PAYER: <?= $total_global; ?>€</h3>
+    <?php else: ?>
+    <p>Désolé mais aucun produit n'a encore été saisi</p>
+    <?php endif; ?>
+
+
+
+    <h2><strong>Saisie d'un nouveau produit</strong></h2>
+    <form method="POST" action="./validation.php">
+        <label>
+            <span>Libelle</span>
+            <input type="text" name="designation">
+        </label>
+
+        <label>
+            <span>Quantité</span>
+            <input type="text" name="quantity">
+        </label>
+
+        <label>
+            <span>Price</span>
+            <input type="text" name="price">
+        </label>
+
+        <input type="submit" name="Valider">
+    </form>
 </body>
 </html>
